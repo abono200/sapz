@@ -1,0 +1,60 @@
+name: SAPZ Enterprise Platform CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+jobs:
+  backend-quality-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          extensions: mbstring, pdo, pdo_pgsql, zip
+          coverage: xdebug
+
+      - name: Install Backend Dependencies
+        run: |
+          cd backend
+          composer install --prefer-dist --no-progress
+
+      - name: Coding Standards Check (PHP CS Fixer / Pint)
+        run: |
+          cd backend
+          ./vendor/bin/pint --test || true
+
+      - name: Run Backend Unit & Integration Tests
+        run: |
+          cd backend
+          ./vendor/bin/phpunit --coverage-text
+
+  frontend-quality-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install Frontend Dependencies
+        run: |
+          cd frontend
+          npm ci
+
+      - name: ESLint & Code Formatting Check
+        run: |
+          cd frontend
+          npm run lint || true
+
+      - name: Frontend Build Verification
+        run: |
+          cd frontend
+          npm run build

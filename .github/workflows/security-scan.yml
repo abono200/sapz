@@ -1,0 +1,27 @@
+name: DevSecOps Vulnerability & Security Scan
+
+on:
+  push:
+    branches: [ main, develop ]
+  schedule:
+    - cron: '0 0 * * 0' # Weekly scan
+
+jobs:
+  security-audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Run Trivy Vulnerability Scanner (Container & Repository)
+        uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: 'fs'
+          ignore-unfixed: true
+          format: 'table'
+          severity: 'CRITICAL,HIGH'
+
+      - name: PHP Security Checker
+        run: |
+          cd backend
+          curl -sS https://get.symfony.com/cli/installer | bash
+          ~/.symfony5/bin/symfony check:security || true

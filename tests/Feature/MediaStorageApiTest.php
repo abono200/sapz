@@ -1,0 +1,23 @@
+<?php
+
+namespace Tests\Feature;
+
+use Tests\TestCase;
+use App\Models\User;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+
+class MediaStorageApiTest extends TestCase
+{
+    use RefreshDatabase;
+
+    public function test_user_can_fetch_media_registry()
+    {
+        $user = User::factory()->create();
+
+        $response = $this->actingAs($user, 'sanctum')
+                         ->getJson('/api/v1/media');
+
+        $response->assertStatus(200)
+                 ->assertJson(['success' => true]);
+    }
+}

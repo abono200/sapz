@@ -1,0 +1,48 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sapz-backend-deployment
+  namespace: sapz-prod
+  labels:
+    app: sapz-backend
+    tier: api
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: sapz-backend
+  template:
+    metadata:
+      labels:
+        app: sapz-backend
+    spec:
+      containers:
+      - name: backend
+        image: registry.sapz.gov.ng/sapz-platform/backend:latest
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8000
+        envFrom:
+        - configMapRef:
+            name: sapz-config
+        - secretRef:
+            name: sapz-secrets
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "250m"
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
+        livenessProbe:
+          httpGet:
+            path: /api/v1/health
+            port: 8000
+          initialDelaySeconds: 15
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /api/v1/health
+            port: 8000
+          initialDelaySeconds: 5
+          periodSeconds: 5

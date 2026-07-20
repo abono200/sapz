@@ -1,0 +1,22 @@
+---
+- name: Deploy SAPZ Enterprise Platform Services
+  hosts: app_servers
+  become: yes
+  tasks:
+    - name: Pull latest Docker images
+      community.docker.docker_image:
+        name: "{{ item }}"
+        source: pull
+      loop:
+        - registry.sapz.gov.ng/sapz-platform/backend:latest
+        - registry.sapz.gov.ng/sapz-platform/frontend:latest
+
+    - name: Execute database migrations
+      community.docker.docker_container_exec:
+        container: sapz_backend
+        command: php artisan migrate --force
+      register: migration_output
+
+    - name: Display migration results
+      debug:
+        var: migration_output.stdout

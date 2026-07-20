@@ -1,12 +1,12 @@
-# SAPZ Platform Source Code Repository
+# SAPZ Enterprise Delivery Programme — Source Code Repository
 
-Welcome to the source code repository for the **Special Agro-Industrial Processing Zones (SAPZ)** Enterprise Platform.
+Welcome to the official source code repository for the **SAPZ Enterprise Delivery Programme** (Enterprise Management System - ESM & Central Knowledge Repository - CKR).
 
 ---
 
 ## 📁 Repository Structure
 
-```
+```text
 sapz-platform/
 ├── backend/          # Laravel 11 / PHP 8.3 Enterprise API & Application Services
 ├── frontend/         # React / Next.js / TailwindCSS Enterprise Management Portal (ESM)
@@ -25,4 +25,4 @@ sapz-platform/
 
 ---
 
-*Governed by the Master Engineering Constitution & Work Package Execution Framework.*
+*Governed by the Master Engineering Constitution & SAPZ Enterprise Delivery Programme Framework.*

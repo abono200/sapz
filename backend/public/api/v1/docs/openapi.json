@@ -1,0 +1,65 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "SAPZ Enterprise Delivery Programme API Gateway",
+    "version": "1.0.0-rc1",
+    "description": "OpenAPI Specification for SAPZ ESM & CKR Platform"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:8000/api/v1",
+      "description": "Local Container REST API Gateway"
+    }
+  ],
+  "paths": {
+    "/health": {
+      "get": {
+        "summary": "System Health Status",
+        "responses": {
+          "200": {
+            "description": "Healthy response"
+          }
+        }
+      }
+    },
+    "/auth/login": {
+      "post": {
+        "summary": "Admin Authentication",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "email": {
+                    "type": "string",
+                    "example": "admin@sapz.gov.ng"
+                  },
+                  "password": {
+                    "type": "string",
+                    "example": "Admin@2026!"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Bearer token and user profile"
+          }
+        }
+      }
+    },
+    "/executive/summary": {
+      "get": {
+        "summary": "Executive KPI Summary",
+        "responses": {
+          "200": {
+            "description": "Executive dashboard metrics"
+          }
+        }
+      }
+    }
+  }
+}

@@ -26,7 +26,7 @@ if ($command === 'serve') {
     if (!is_dir($publicDir)) {
         mkdir($publicDir, 0755, true);
     }
-    passthru("php -S {$host}:{$port} -t {$publicDir}");
+    passthru("php -S {$host}:{$port} -t {$publicDir} {$publicDir}/index.php");
     exit(0);
 }
 

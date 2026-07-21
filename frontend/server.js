@@ -3,6 +3,99 @@ const url = require('url');
 
 const PORT = process.env.PORT || 3000;
 
+const loginHtml = `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SAPZ Enterprise Admin Authentication</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-slate-900 text-slate-100 min-h-screen flex items-center justify-center p-6 font-sans">
+  <div class="max-w-md w-full bg-slate-800/60 border border-slate-700/60 rounded-2xl p-8 shadow-2xl backdrop-blur-xl">
+    <div class="text-center mb-8">
+      <div class="inline-flex items-center justify-center w-14 h-14 bg-emerald-500/10 border border-emerald-500/30 rounded-2xl text-emerald-400 font-bold text-xl mb-4">
+        SAPZ
+      </div>
+      <h1 class="text-2xl font-bold text-white tracking-tight">Admin Authentication</h1>
+      <p class="text-xs text-slate-400 mt-1">SAPZ Enterprise Delivery Programme (ESM & CKR)</p>
+    </div>
+
+    <form id="loginForm" class="space-y-5" onsubmit="handleLogin(event)">
+      <div>
+        <label class="block text-xs font-semibold uppercase tracking-wider text-slate-300 mb-2">Administrator Email</label>
+        <input type="email" id="email" value="admin@sapz.gov.ng" required class="w-full px-4 py-3 bg-slate-900/80 border border-slate-700 rounded-xl text-white text-sm focus:outline-none focus:border-emerald-500 transition-colors" />
+      </div>
+
+      <div>
+        <label class="block text-xs font-semibold uppercase tracking-wider text-slate-300 mb-2">Password</label>
+        <input type="password" id="password" value="Admin@2026!" required class="w-full px-4 py-3 bg-slate-900/80 border border-slate-700 rounded-xl text-white text-sm focus:outline-none focus:border-emerald-500 transition-colors" />
+      </div>
+
+      <div id="alertBox" class="hidden p-4 rounded-xl text-xs font-medium"></div>
+
+      <button type="submit" id="submitBtn" class="w-full py-3.5 bg-emerald-600 hover:bg-emerald-500 text-white font-semibold rounded-xl shadow-lg transition-all flex items-center justify-center gap-2">
+        <span>Sign In to ESM Portal &rarr;</span>
+      </button>
+
+      <div class="p-4 bg-slate-900/40 border border-slate-700/40 rounded-xl text-xs text-slate-400 space-y-1.5">
+        <p class="font-semibold text-slate-200">🔑 Default Admin Credentials:</p>
+        <p><span class="text-slate-500">Email:</span> <code class="text-emerald-400 font-mono">admin@sapz.gov.ng</code></p>
+        <p><span class="text-slate-500">Password:</span> <code class="text-emerald-400 font-mono">Admin@2026!</code></p>
+        <p><span class="text-slate-500">Role:</span> <span class="text-amber-400">Super Administrator (Dr. Kabir Yusuf)</span></p>
+      </div>
+    </form>
+
+    <div class="mt-6 text-center">
+      <a href="/" class="text-xs text-slate-400 hover:text-slate-200 transition-colors">&larr; Back to Home Portal</a>
+    </div>
+  </div>
+
+  <script>
+    async function handleLogin(e) {
+      e.preventDefault();
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
+      const alertBox = document.getElementById('alertBox');
+      const submitBtn = document.getElementById('submitBtn');
+
+      submitBtn.disabled = true;
+      submitBtn.innerHTML = 'Authenticating...';
+      alertBox.className = 'hidden';
+
+      try {
+        const res = await fetch('http://localhost:8000/api/v1/auth/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password })
+        });
+        const data = await res.json();
+
+        if (res.ok && data.success) {
+          alertBox.className = 'p-4 rounded-xl text-xs font-medium bg-emerald-500/10 border border-emerald-500/30 text-emerald-400';
+          alertBox.innerHTML = '✅ ' + data.message + ' Redirecting to Executive Portal...';
+          localStorage.setItem('sapz_token', data.data.access_token);
+          localStorage.setItem('sapz_user', JSON.stringify(data.data.user));
+          setTimeout(() => {
+            window.location.href = '/executive';
+          }, 1200);
+        } else {
+          alertBox.className = 'p-4 rounded-xl text-xs font-medium bg-rose-500/10 border border-rose-500/30 text-rose-400';
+          alertBox.innerHTML = '❌ ' + (data.message || 'Authentication failed.');
+          submitBtn.disabled = false;
+          submitBtn.innerHTML = '<span>Sign In to ESM Portal &rarr;</span>';
+        }
+      } catch (err) {
+        alertBox.className = 'p-4 rounded-xl text-xs font-medium bg-rose-500/10 border border-rose-500/30 text-rose-400';
+        alertBox.innerHTML = '❌ Connection error: Ensure API Gateway is running on port 8000.';
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = '<span>Sign In to ESM Portal &rarr;</span>';
+      }
+    }
+  </script>
+</body>
+</html>`;
+
 const homeHtml = `<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -178,6 +271,12 @@ const server = http.createServer((req, res) => {
   const reqUrl = url.parse(req.url, true).pathname;
   res.setHeader('Access-Control-Allow-Origin', '*');
 
+    if (reqUrl === '/login' || reqUrl === '/login/') {
+    res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
+    res.end(loginHtml);
+    return;
+  }
+  
   if (reqUrl === '/' || reqUrl === '/index.html') {
     res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
     res.end(homeHtml);

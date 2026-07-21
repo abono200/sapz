@@ -31,6 +31,80 @@ if ($uri === '/api/v1/health' || $uri === '/health') {
     exit(0);
 }
 
+if ($uri === '/api/v1/auth/login') {
+    $input = json_decode(file_get_contents('php://input'), true) ?? $_POST;
+    $email = trim($input['email'] ?? '');
+    $password = trim($input['password'] ?? '');
+
+    if ($email === 'admin@sapz.gov.ng' && $password === 'Admin@2026!') {
+        echo json_encode([
+            'success' => true,
+            'message' => 'Authentication successful. Welcome, Programme Coordinator.',
+            'data' => [
+                'access_token' => '1|sapz_sanctum_token_admin_982371928371293817293',
+                'token_type' => 'Bearer',
+                'user' => [
+                    'id' => '9b1deb4d-3b7d-4bad-9bdd-2b0d7b3d9b01',
+                    'name' => 'Dr. Kabir Yusuf',
+                    'email' => 'admin@sapz.gov.ng',
+                    'role' => 'Super Administrator',
+                    'department' => 'National Programme Coordination Office (NPCO)',
+                    'permissions' => [
+                        'manage_programmes',
+                        'manage_projects',
+                        'manage_users',
+                        'signoff_approvals',
+                        'access_executive_dashboard',
+                        'manage_ckr_articles'
+                    ]
+                ]
+            ],
+            'error' => null
+        ]);
+        exit(0);
+    }
+
+    http_response_code(401);
+    echo json_encode([
+        'success' => false,
+        'message' => 'Invalid email or password credentials.',
+        'data' => null,
+        'error' => [
+            'code' => 'UNAUTHORIZED',
+            'details' => 'Please use administrator email admin@sapz.gov.ng and password Admin@2026!'
+        ]
+    ]);
+    exit(0);
+}
+
+if ($uri === '/api/v1/auth/me') {
+    $authHeader = $_SERVER['HTTP_AUTHORIZATION'] ?? '';
+    if (str_contains($authHeader, 'Bearer 1|sapz_sanctum_token')) {
+        echo json_encode([
+            'success' => true,
+            'message' => 'User profile retrieved successfully.',
+            'data' => [
+                'id' => '9b1deb4d-3b7d-4bad-9bdd-2b0d7b3d9b01',
+                'name' => 'Dr. Kabir Yusuf',
+                'email' => 'admin@sapz.gov.ng',
+                'role' => 'Super Administrator',
+                'department' => 'National Programme Coordination Office (NPCO)',
+                'is_active' => true
+            ],
+            'error' => null
+        ]);
+        exit(0);
+    }
+    http_response_code(401);
+    echo json_encode([
+        'success' => false,
+        'message' => 'Unauthenticated.',
+        'data' => null,
+        'error' => ['code' => 'UNAUTHENTICATED']
+    ]);
+    exit(0);
+}
+
 if ($uri === '/api/v1/metrics' || $uri === '/metrics') {
     header('Content-Type: text/plain');
     echo "# HELP sapz_api_requests_total Total API requests served\n";
@@ -52,6 +126,25 @@ if ($uri === '/api/v1/docs/openapi.json') {
                 'get' => [
                     'summary' => 'System Health Status',
                     'responses' => ['200' => ['description' => 'Healthy response']]
+                ]
+            ],
+            '/api/v1/auth/login' => [
+                'post' => [
+                    'summary' => 'Admin Authentication',
+                    'requestBody' => [
+                        'content' => [
+                            'application/json' => [
+                                'schema' => [
+                                    'type' => 'object',
+                                    'properties' => [
+                                        'email' => ['type' => 'string', 'example' => 'admin@sapz.gov.ng'],
+                                        'password' => ['type' => 'string', 'example' => 'Admin@2026!']
+                                    ]
+                                ]
+                            ]
+                        ]
+                    ],
+                    'responses' => ['200' => ['description' => 'Bearer token and admin user profile']]
                 ]
             ]
         ]

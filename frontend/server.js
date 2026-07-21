@@ -3,6 +3,171 @@ const url = require('url');
 
 const PORT = process.env.PORT || 3000;
 
+const ckrHtml = `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SAPZ Central Knowledge Repository (CKR)</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-slate-900 text-slate-100 min-h-screen p-8 font-sans">
+  <div class="max-w-7xl mx-auto">
+    <!-- Top Header -->
+    <header class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 border-b border-slate-800 pb-5 gap-4">
+      <div class="flex items-center gap-3">
+        <div class="p-2.5 bg-purple-500/10 border border-purple-500/20 rounded-xl text-purple-400 font-bold">
+          CKR
+        </div>
+        <div>
+          <h1 class="text-3xl font-bold tracking-tight text-white">Central Knowledge Repository</h1>
+          <p class="text-slate-400 mt-1">National Programme Coordination Office — Public Research & Document Library</p>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-3">
+        <a href="/" class="text-xs text-slate-400 hover:text-white transition-colors mr-4">&larr; Back to Home</a>
+        <a href="/executive" class="px-3.5 py-2 bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-200 rounded-xl text-xs font-semibold">
+          Executive ESM &rarr;
+        </a>
+      </div>
+    </header>
+
+    <!-- Search & Filter Bar -->
+    <div class="bg-slate-800/40 border border-slate-700/50 rounded-2xl p-6 mb-8">
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <div class="md:col-span-3">
+          <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">Search Knowledge Base</label>
+          <input type="text" id="searchInput" placeholder="Search by title, keyword, author, or document ID..." class="w-full px-4 py-3 bg-slate-900/80 border border-slate-700 rounded-xl text-white text-sm focus:outline-none focus:border-purple-500 transition-colors" onkeyup="filterArticles()" />
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">Filter Category</label>
+          <select id="categorySelect" class="w-full px-4 py-3 bg-slate-900/80 border border-slate-700 rounded-xl text-white text-sm focus:outline-none focus:border-purple-500 transition-colors" onchange="filterArticles()">
+            <option value="ALL">All Categories</option>
+            <option value="ESMF">ESMF & Environment</option>
+            <option value="INFRA">Agro Infrastructure</option>
+            <option value="REPORT">M&E Impact Reports</option>
+            <option value="PROCURE">Procurement Guidelines</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <!-- Article Cards Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="articlesGrid">
+      <!-- Article 1 -->
+      <div class="article-card bg-slate-800/40 border border-slate-700/50 rounded-2xl p-6 flex flex-col justify-between" data-category="ESMF" data-title="Environmental and Social Management Framework (ESMF) for SAPZ Phase 1">
+        <div>
+          <div class="flex items-center justify-between mb-3">
+            <span class="px-2.5 py-1 bg-purple-500/10 border border-purple-500/30 text-purple-400 rounded-md text-xs font-medium">ESMF & Environment</span>
+            <span class="text-xs text-slate-500">Jul 2026</span>
+          </div>
+          <h3 class="text-lg font-bold text-white mb-2 leading-snug">Environmental and Social Management Framework (ESMF) for SAPZ Phase 1</h3>
+          <p class="text-xs text-slate-400 mb-4 line-clamp-3">Comprehensive environmental safeguard assessment for agro-processing hubs across 7 participating states in Nigeria.</p>
+        </div>
+
+        <div>
+          <div class="p-3 bg-slate-900/60 rounded-xl border border-slate-800 text-xs font-mono text-slate-300 mb-4" id="cite-1">
+            <strong>APA 7th:</strong> NPCO SAPZ. (2026). <em>Environmental and Social Management Framework</em>. Federal Ministry of Agriculture.
+          </div>
+
+          <div class="flex items-center justify-between pt-3 border-t border-slate-800">
+            <button onclick="copyCitation(1)" class="text-xs font-semibold text-purple-400 hover:text-purple-300 flex items-center gap-1">
+              📋 Copy APA Citation
+            </button>
+            <a href="http://localhost:8000/api/v1/ckr/articles" target="_blank" class="px-3 py-1.5 bg-purple-600 hover:bg-purple-500 text-white rounded-lg text-xs font-medium">
+              View Specs &rarr;
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Article 2 -->
+      <div class="article-card bg-slate-800/40 border border-slate-700/50 rounded-2xl p-6 flex flex-col justify-between" data-category="INFRA" data-title="Agro-Processing Zone Technical Infrastructure Standards">
+        <div>
+          <div class="flex items-center justify-between mb-3">
+            <span class="px-2.5 py-1 bg-blue-500/10 border border-blue-500/30 text-blue-400 rounded-md text-xs font-medium">Agro Infrastructure</span>
+            <span class="text-xs text-slate-500">Jun 2026</span>
+          </div>
+          <h3 class="text-lg font-bold text-white mb-2 leading-snug">Agro-Processing Zone Technical Infrastructure Standards</h3>
+          <p class="text-xs text-slate-400 mb-4 line-clamp-3">Engineering specifications for power grid connections, water sanitation, and cold-chain logistics hubs.</p>
+        </div>
+
+        <div>
+          <div class="p-3 bg-slate-900/60 rounded-xl border border-slate-800 text-xs font-mono text-slate-300 mb-4" id="cite-2">
+            <strong>MLA 9th:</strong> NPCO Technical Team. "Agro-Processing Zone Infrastructure Standards." <em>SAPZ Repository</em>, 2026.
+          </div>
+
+          <div class="flex items-center justify-between pt-3 border-t border-slate-800">
+            <button onclick="copyCitation(2)" class="text-xs font-semibold text-blue-400 hover:text-blue-300 flex items-center gap-1">
+              📋 Copy MLA Citation
+            </button>
+            <a href="http://localhost:8000/api/v1/ckr/articles" target="_blank" class="px-3 py-1.5 bg-blue-600 hover:bg-blue-500 text-white rounded-lg text-xs font-medium">
+              View Specs &rarr;
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Article 3 -->
+      <div class="article-card bg-slate-800/40 border border-slate-700/50 rounded-2xl p-6 flex flex-col justify-between" data-category="REPORT" data-title="Annual Programme Monitoring & Evaluation Impact Report">
+        <div>
+          <div class="flex items-center justify-between mb-3">
+            <span class="px-2.5 py-1 bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 rounded-md text-xs font-medium">M&E Impact Reports</span>
+            <span class="text-xs text-slate-500">May 2026</span>
+          </div>
+          <h3 class="text-lg font-bold text-white mb-2 leading-snug">Annual Programme Monitoring & Evaluation Impact Report</h3>
+          <p class="text-xs text-slate-400 mb-4 line-clamp-3">Quantitative evaluation metrics covering job creation, crop yield enhancements, and multi-donor grant disbursements.</p>
+        </div>
+
+        <div>
+          <div class="p-3 bg-slate-900/60 rounded-xl border border-slate-800 text-xs font-mono text-slate-300 mb-4" id="cite-3">
+            <strong>IEEE:</strong> [1] NPCO M&E Unit, "Annual SAPZ Impact Evaluation Report," <em>SAPZ CKR Doc. 2026-M05</em>, May 2026.
+          </div>
+
+          <div class="flex items-center justify-between pt-3 border-t border-slate-800">
+            <button onclick="copyCitation(3)" class="text-xs font-semibold text-emerald-400 hover:text-emerald-300 flex items-center gap-1">
+              📋 Copy IEEE Citation
+            </button>
+            <a href="http://localhost:8000/api/v1/ckr/articles" target="_blank" class="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg text-xs font-medium">
+              View Specs &rarr;
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function filterArticles() {
+      const query = document.getElementById('searchInput').value.toLowerCase();
+      const cat = document.getElementById('categorySelect').value;
+      const cards = document.querySelectorAll('.article-card');
+
+      cards.forEach(card => {
+        const title = card.getAttribute('data-title').toLowerCase();
+        const category = card.getAttribute('data-category');
+        const matchesQuery = title.includes(query);
+        const matchesCat = cat === 'ALL' || category === cat;
+
+        if (matchesQuery && matchesCat) {
+          card.style.display = 'flex';
+        } else {
+          card.style.display = 'none';
+        }
+      });
+    }
+
+    function copyCitation(id) {
+      const text = document.getElementById('cite-' + id).innerText;
+      navigator.clipboard.writeText(text);
+      alert('Citation copied to clipboard!');
+    }
+  </script>
+</body>
+</html>`;
+
 const loginHtml = `<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -271,7 +436,13 @@ const server = http.createServer((req, res) => {
   const reqUrl = url.parse(req.url, true).pathname;
   res.setHeader('Access-Control-Allow-Origin', '*');
 
-    if (reqUrl === '/login' || reqUrl === '/login/') {
+      if (reqUrl === '/ckr' || reqUrl === '/ckr/') {
+    res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
+    res.end(ckrHtml);
+    return;
+  }
+
+  if (reqUrl === '/login' || reqUrl === '/login/') {
     res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
     res.end(loginHtml);
     return;

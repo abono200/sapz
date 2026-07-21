@@ -322,7 +322,7 @@ const executiveHtml = `<!DOCTYPE html>
         <p id="dashSubtitle" class="text-slate-400 mt-1">National Programme Coordination Office — Real-time Governance Overview</p>
       </div>
       <div class="flex items-center gap-3">
-        <a href="/" class="text-xs text-slate-400 hover:text-white transition-colors mr-4">&larr; Home</a>
+        <a href="/" class="text-xs font-semibold px-3 py-1.5 bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-300 rounded-xl transition-colors">&larr; Home Portal</a>
         <span id="roleBadge" class="px-3 py-1 bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 rounded-full text-xs font-semibold uppercase tracking-wider">
           Super Administrator
         </span>

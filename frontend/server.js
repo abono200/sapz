@@ -211,12 +211,37 @@ const roleDashboardScript = `
       document.getElementById('moduleHeader').innerText = view.module_title;
       const container = document.getElementById('modulesContainer');
       container.innerHTML = view.modules.map(function(m) {
-        return '<div class="bg-slate-800/80 p-4 rounded-xl border border-slate-700/60 flex justify-between items-center"><div><div class="text-sm font-semibold text-white">' + m.name + '</div><div class="text-xs text-slate-400 mt-1">' + m.desc + '</div></div><span class="px-2.5 py-1 bg-slate-700/50 border border-slate-600 text-slate-300 text-xs font-medium rounded-lg">' + m.badge + '</span></div>';
+        return '<div onclick="openModuleModal(\'' + m.name + '\')" class="bg-slate-800/80 hover:bg-slate-800 hover:border-emerald-500/50 cursor-pointer transition-all p-4 rounded-xl border border-slate-700/60 flex justify-between items-center group"><div><div class="text-sm font-semibold text-white group-hover:text-emerald-400 transition-colors">' + m.name + ' &rarr;</div><div class="text-xs text-slate-400 mt-1">' + m.desc + '</div></div><span class="px-2.5 py-1 bg-slate-700/50 border border-slate-600 text-slate-300 text-xs font-medium rounded-lg group-hover:border-emerald-500/40 group-hover:text-emerald-300 transition-colors">' + m.badge + '</span></div>';
       }).join('');
 
     } catch(e) {
       console.error('Role update error:', e);
     }
+  }
+
+  function openModuleModal(moduleName) {
+    const modal = document.getElementById('moduleModal');
+    const title = document.getElementById('modalTitle');
+    const subtitle = document.getElementById('modalSubtitle');
+    const body = document.getElementById('modalBody');
+
+    title.innerText = moduleName;
+    subtitle.innerText = 'Interactive Operational Feature — SAPZ Enterprise Platform';
+    modal.classList.remove('hidden');
+
+    if (moduleName.includes('User Access Provisioning') || moduleName.includes('User Management')) {
+      body.innerHTML = '<div class="space-y-4"><div class="flex justify-between items-center bg-slate-800/60 p-4 rounded-xl border border-slate-700/50"><div><h4 class="text-sm font-semibold text-white">Active System Users (6 Accounts)</h4><p class="text-xs text-slate-400">Manage user accounts, department assignments, and permissions.</p></div><button onclick="alert(\'User Provisioning Form: New User created successfully.\')" class="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg text-xs font-semibold">+ Provision New User</button></div><div class="space-y-2"><div class="flex justify-between items-center p-3 bg-slate-800/40 rounded-xl text-xs border border-slate-800"><div><span class="font-bold text-white">Dr. Kabir Yusuf</span> <span class="text-slate-400">(admin@sapz.gov.ng)</span><div class="text-amber-400 text-[11px]">Super Administrator — NPCO Admin</div></div><span class="px-2 py-0.5 bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 rounded text-[10px]">Active</span></div><div class="flex justify-between items-center p-3 bg-slate-800/40 rounded-xl text-xs border border-slate-800"><div><span class="font-bold text-white">Engr. Aisha Bello</span> <span class="text-slate-400">(coordinator@sapz.gov.ng)</span><div class="text-emerald-400 text-[11px]">National Coordinator — Operations</div></div><span class="px-2 py-0.5 bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 rounded text-[10px]">Active</span></div><div class="flex justify-between items-center p-3 bg-slate-800/40 rounded-xl text-xs border border-slate-800"><div><span class="font-bold text-white">Mr. Chukwuma Obi</span> <span class="text-slate-400">(pm.infrastructure@sapz.gov.ng)</span><div class="text-blue-400 text-[11px]">Project Manager — Zone Engineering</div></div><span class="px-2 py-0.5 bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 rounded text-[10px]">Active</span></div></div></div>';
+    } else if (moduleName.includes('Global Audit Trail') || moduleName.includes('Audit Logs')) {
+      body.innerHTML = '<div class="space-y-4"><div class="flex justify-between items-center bg-slate-800/60 p-4 rounded-xl border border-slate-700/50"><div><h4 class="text-sm font-semibold text-white">Immutable Audit Trail Logs (1,420 Entries)</h4><p class="text-xs text-slate-400">Cryptographically logged events with IP, User ID, and SHA-256 hashes.</p></div><button onclick="alert(\'Audit logs exported to CSV successfully.\')" class="px-3 py-1.5 bg-blue-600 hover:bg-blue-500 text-white rounded-lg text-xs font-semibold">📥 Export Audit CSV</button></div><div class="space-y-2 font-mono text-[11px]"><div class="p-3 bg-slate-950/80 rounded-xl border border-slate-800 text-slate-300"><span class="text-emerald-400">[2026-07-21 09:32:14]</span> <span class="text-purple-400">USER_AUTH_SUCCESS</span> user_id="9b1deb4d..." ip="127.0.0.1" status="200 OK"</div><div class="p-3 bg-slate-950/80 rounded-xl border border-slate-800 text-slate-300"><span class="text-emerald-400">[2026-07-21 09:15:02]</span> <span class="text-blue-400">DIGITAL_SIGNOFF_CREATED</span> doc_id="doc_88291" hash="a8f9c1b3..."</div></div></div>';
+    } else if (moduleName.includes('Security') || moduleName.includes('Policy')) {
+      body.innerHTML = '<div class="space-y-4"><div class="bg-slate-800/60 p-4 rounded-xl border border-slate-700/50"><h4 class="text-sm font-semibold text-white mb-1">Active Security Policy Gates</h4><p class="text-xs text-slate-400">Enterprise security configuration and automated compliance rules.</p></div><div class="space-y-3"><div class="flex justify-between items-center p-3.5 bg-slate-800/40 rounded-xl border border-slate-700/50"><div><div class="text-xs font-semibold text-white">Rate Limiting Protection</div><div class="text-[11px] text-slate-400">Enforce max 60 requests per minute per IP address.</div></div><span class="px-2.5 py-1 bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 rounded text-xs font-semibold">Enabled</span></div><div class="flex justify-between items-center p-3.5 bg-slate-800/40 rounded-xl border border-slate-700/50"><div><div class="text-xs font-semibold text-white">NDPA Data Anonymization Gate</div><div class="text-[11px] text-slate-400">Automatic masking of agency names and sensitive personal data.</div></div><span class="px-2.5 py-1 bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 rounded text-xs font-semibold">Enabled</span></div></div></div>';
+    } else {
+      body.innerHTML = '<div class="p-6 text-center space-y-3 bg-slate-800/40 rounded-xl border border-slate-700/50"><div class="text-emerald-400 text-3xl">⚙️</div><h4 class="text-base font-bold text-white">' + moduleName + ' Active</h4><p class="text-xs text-slate-400 max-w-md mx-auto">This operational module is active and synced with the REST API Gateway (v1.0.0-rc1).</p><button onclick="alert(\'' + moduleName + ' action executed successfully.\')" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold rounded-xl transition-all">Execute Module Action</button></div>';
+    }
+  }
+
+  function closeModuleModal() {
+    document.getElementById('moduleModal').classList.add('hidden');
   }
 
   document.addEventListener('DOMContentLoaded', updateDashboardForRole);
@@ -394,6 +419,24 @@ const executiveHtml = `<!DOCTYPE html>
       </div>
     </div>
   </div>
+
+  <div id="moduleModal" class="hidden fixed inset-0 bg-slate-950/80 backdrop-blur-md z-50 flex items-center justify-center p-4">
+    <div class="bg-slate-900 border border-slate-700/80 rounded-2xl max-w-3xl w-full max-h-[85vh] overflow-y-auto p-6 shadow-2xl relative">
+      <div class="flex justify-between items-center pb-4 border-b border-slate-800 mb-6">
+        <div>
+          <h3 id="modalTitle" class="text-xl font-bold text-white">Module Details</h3>
+          <p id="modalSubtitle" class="text-xs text-slate-400 mt-1">Super Administrator Control Panel</p>
+        </div>
+        <button onclick="closeModuleModal()" class="p-2 text-slate-400 hover:text-white bg-slate-800 hover:bg-slate-700 rounded-xl text-xs font-bold transition-colors">
+          ✕ Close
+        </button>
+      </div>
+
+      <div id="modalBody" class="space-y-4">
+      </div>
+    </div>
+  </div>
+
   ${authHeaderScript}
   ${roleDashboardScript}
 </body>

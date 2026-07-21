@@ -35,6 +35,194 @@ const authHeaderScript = `
 </script>
 `;
 
+const roleDashboardScript = `
+<script>
+  const roleViews = {
+    'Super Administrator': {
+      title: 'Super Administrator Governance Portal',
+      subtitle: 'System-wide User Management, Security Gates, & Global Audit Controls',
+      badge: 'bg-rose-500/10 border-rose-500/30 text-rose-400',
+      kpi1_title: 'System Users & Roles',
+      kpi1_val: '45 Active Users',
+      kpi1_sub: '6 Defined RBAC Roles',
+      kpi2_title: 'System Security Score',
+      kpi2_val: '98.5%',
+      kpi2_sub: '100% NDPA Compliant',
+      kpi3_title: 'Global Audit Logs',
+      kpi3_val: '1,420 Entries',
+      kpi3_sub: 'Immutable Log Stream',
+      kpi4_title: 'System Health',
+      kpi4_val: '100% Operational',
+      kpi4_sub: '5 Containers Active',
+      module_title: 'System Administration & Role Controls',
+      modules: [
+        { name: 'User Access Provisioning', desc: 'Create, update, and revoke user roles across NPCO units.', badge: 'User Management' },
+        { name: 'Global Audit Trail Inspection', desc: 'Real-time security log inspection for NDPA compliance.', badge: 'Audit Logs' },
+        { name: 'Security & Policy Gates', desc: 'Configure hybrid RBAC/ABAC authorization rules.', badge: 'Security Policy' }
+      ]
+    },
+    'National Programme Coordinator': {
+      title: 'National Coordinator Executive Dashboard',
+      subtitle: 'National Programme Oversight & Digital Sign-off Authorization Center',
+      badge: 'bg-emerald-500/10 border-emerald-500/30 text-emerald-400',
+      kpi1_title: 'Participating SAPZ Zones',
+      kpi1_val: '7 State Hubs',
+      kpi1_sub: 'Kano, Ogun, Kaduna, etc.',
+      kpi2_title: 'Pending Sign-offs',
+      kpi2_val: '4 Approvals',
+      kpi2_sub: 'Awaiting Coordinator Sign-off',
+      kpi3_title: 'Disbursed Funds',
+      kpi3_val: '₦1,850,000,000.00',
+      kpi3_sub: '75.5% Grant Execution Rate',
+      kpi4_title: 'Milestone Review Rate',
+      kpi4_val: '100%',
+      kpi4_sub: 'All Milestones Audited',
+      module_title: 'Executive Approvals & Zone Oversight',
+      modules: [
+        { name: 'SHA-256 Digital Sign-off Center', desc: 'Review and cryptographically sign off on milestone releases.', badge: 'Digital Sign-off' },
+        { name: 'National SAPZ Zone Map', desc: 'Inter-state processing zone execution and infrastructure progress.', badge: 'Zone Map' },
+        { name: 'Donor High-Level Summary', desc: 'Executive reporting metrics for IFAD, AfDB, and IsDB.', badge: 'Donor Metrics' }
+      ]
+    },
+    'Project Manager': {
+      title: 'Infrastructure Project Control Panel',
+      subtitle: 'Zone Civil Engineering, Task Tracking, & Milestone Execution',
+      badge: 'bg-blue-500/10 border-blue-500/30 text-blue-400',
+      kpi1_title: 'Active Zone Projects',
+      kpi1_val: '5 Civil Projects',
+      kpi1_sub: 'Power, Water, & Roads',
+      kpi2_title: 'Milestone Tasks',
+      kpi2_val: '24 Tasks',
+      kpi2_sub: '18 Completed, 6 In Progress',
+      kpi3_title: 'Engineering Completion',
+      kpi3_val: '82%',
+      kpi3_sub: 'On Schedule for Q4 Target',
+      kpi4_title: 'Critical Issues',
+      kpi4_val: '0 Delays',
+      kpi4_sub: 'All Specs Validated',
+      module_title: 'Project Execution & Document Controls',
+      modules: [
+        { name: 'Active Engineering Task Board', desc: 'Kanban tracking for zone civil works and site managers.', badge: 'Task Kanban' },
+        { name: 'Document Revision Manager', desc: 'Upload engineering drawings and technical CAD specifications.', badge: 'Doc Revisions' },
+        { name: 'Milestone Submission Portal', desc: 'Submit completed milestone evidence for coordinator sign-off.', badge: 'Milestones' }
+      ]
+    },
+    'Monitoring & Evaluation Specialist': {
+      title: 'Monitoring & Evaluation (M&E) Portal',
+      subtitle: 'Mobile Field Data Validation, KPI Metrics, & Impact Evaluation',
+      badge: 'bg-amber-500/10 border-amber-500/30 text-amber-400',
+      kpi1_title: 'Mobile Surveys Validated',
+      kpi1_val: '342 Surveys',
+      kpi1_sub: 'Survey123 / Offline Sync',
+      kpi2_title: 'Direct Beneficiaries',
+      kpi2_val: '1,250 Farmers',
+      kpi2_sub: 'Across 7 Processing Hubs',
+      kpi3_title: 'KPI Data Accuracy',
+      kpi3_val: '94.2%',
+      kpi3_sub: 'Validated against Baseline',
+      kpi4_title: 'Donor Impact Reports',
+      kpi4_val: '12 Reports',
+      kpi4_sub: 'IFAD & AfDB Format',
+      module_title: 'Field Evaluation & Indicator Tracking',
+      modules: [
+        { name: 'Mobile Field Survey Validation', desc: 'Review offline survey submissions from zone field enumerators.', badge: 'Field Data' },
+        { name: 'Real-time KPI Performance Charts', desc: 'Monitor crop yield, job creation, and gender inclusions.', badge: 'KPI Analytics' },
+        { name: 'Donor M&E Export Engine', desc: 'Export standardized impact evaluation spreadsheets for donors.', badge: 'Donor Export' }
+      ]
+    },
+    'Financial & Procurement Auditor': {
+      title: 'Financial Audit & Cryptographic Verification Portal',
+      subtitle: 'Disbursement Inspection, SHA-256 Hash Audits, & NDPA Compliance',
+      badge: 'bg-purple-500/10 border-purple-500/30 text-purple-400',
+      kpi1_title: 'Total Audited Funds',
+      kpi1_val: '₦2,450,000,000.00',
+      kpi1_sub: '100% Fund Line Traceability',
+      kpi2_title: 'NDPA Data Compliance',
+      kpi2_val: '100%',
+      kpi2_sub: 'Zero Data Loss / Leakage',
+      kpi3_title: 'Signed Hash Audits',
+      kpi3_val: '48 Hashes',
+      kpi3_sub: 'Cryptographically Verified',
+      kpi4_title: 'Audit Vulnerabilities',
+      kpi4_val: '0 Deficiencies',
+      kpi4_sub: 'Clean Audit Opinion',
+      module_title: 'Audit Tools & Hash Verification',
+      modules: [
+        { name: 'SHA-256 Signature Inspector', desc: 'Verify digital signature hashes against original document files.', badge: 'Hash Inspector' },
+        { name: 'Procurement Contract Audit', desc: 'Inspect contractor bidding records and payment vouchers.', badge: 'Contract Audit' },
+        { name: 'NDPA Data Protection Review', desc: 'Audit personal data anonymization rules and security controls.', badge: 'NDPA Audit' }
+      ]
+    },
+    'CKR Knowledge Manager': {
+      title: 'Central Knowledge Editorial Studio',
+      subtitle: 'Public Research Publishing, ESMF Safeguards, & Citation Engines',
+      badge: 'bg-indigo-500/10 border-indigo-500/30 text-indigo-400',
+      kpi1_title: 'Published Papers',
+      kpi1_val: '14 Papers',
+      kpi1_sub: 'Peer-reviewed Technical Manuals',
+      kpi2_title: 'Public Downloads',
+      kpi2_val: '3,420 Downloads',
+      kpi2_sub: 'Across Academic & Industry',
+      kpi3_title: 'ESMF Safeguards',
+      kpi3_val: '4 Frameworks',
+      kpi3_sub: 'Environmental & Social',
+      kpi4_title: 'Citation Indexing',
+      kpi4_val: '100%',
+      kpi4_sub: 'APA 7th, MLA 9th, & IEEE',
+      module_title: 'Knowledge Publishing & Metadata Tools',
+      modules: [
+        { name: 'CKR Article & Report Publisher', desc: 'Publish new ESMF documents and technical research to CKR.', badge: 'Publish Studio' },
+        { name: 'Citation Metadata Manager', desc: 'Configure APA, MLA, and IEEE bibliographic citation fields.', badge: 'Citations' },
+        { name: 'Media & Asset Store', desc: 'Upload high-resolution maps, diagrams, and PDF research files.', badge: 'Asset Manager' }
+      ]
+    }
+  };
+
+  function updateDashboardForRole() {
+    const userStr = localStorage.getItem('sapz_user');
+    if (!userStr) return;
+    
+    try {
+      const user = JSON.parse(userStr);
+      const roleName = user.role || 'Super Administrator';
+      const view = roleViews[roleName] || roleViews['Super Administrator'];
+
+      document.getElementById('dashTitle').innerText = view.title;
+      document.getElementById('dashSubtitle').innerText = user.name + ' (' + user.department + ') — ' + view.subtitle;
+      document.getElementById('roleBadge').innerText = user.role;
+      document.getElementById('roleBadge').className = 'px-3 py-1 text-xs font-semibold uppercase tracking-wider rounded-full border ' + view.badge;
+
+      document.getElementById('kpi1Title').innerText = view.kpi1_title;
+      document.getElementById('kpi1Val').innerText = view.kpi1_val;
+      document.getElementById('kpi1Sub').innerText = view.kpi1_sub;
+
+      document.getElementById('kpi2Title').innerText = view.kpi2_title;
+      document.getElementById('kpi2Val').innerText = view.kpi2_val;
+      document.getElementById('kpi2Sub').innerText = view.kpi2_sub;
+
+      document.getElementById('kpi3Title').innerText = view.kpi3_title;
+      document.getElementById('kpi3Val').innerText = view.kpi3_val;
+      document.getElementById('kpi3Sub').innerText = view.kpi3_sub;
+
+      document.getElementById('kpi4Title').innerText = view.kpi4_title;
+      document.getElementById('kpi4Val').innerText = view.kpi4_val;
+      document.getElementById('kpi4Sub').innerText = view.kpi4_sub;
+
+      document.getElementById('moduleHeader').innerText = view.module_title;
+      const container = document.getElementById('modulesContainer');
+      container.innerHTML = view.modules.map(function(m) {
+        return '<div class="bg-slate-800/80 p-4 rounded-xl border border-slate-700/60 flex justify-between items-center"><div><div class="text-sm font-semibold text-white">' + m.name + '</div><div class="text-xs text-slate-400 mt-1">' + m.desc + '</div></div><span class="px-2.5 py-1 bg-slate-700/50 border border-slate-600 text-slate-300 text-xs font-medium rounded-lg">' + m.badge + '</span></div>';
+      }).join('');
+
+    } catch(e) {
+      console.error('Role update error:', e);
+    }
+  }
+
+  document.addEventListener('DOMContentLoaded', updateDashboardForRole);
+</script>
+`;
+
 const homeHtml = `<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -130,13 +318,13 @@ const executiveHtml = `<!DOCTYPE html>
   <div class="max-w-7xl mx-auto">
     <div class="flex justify-between items-center mb-8 border-b border-slate-800 pb-5">
       <div>
-        <h1 class="text-3xl font-bold tracking-tight text-white">SAPZ Executive Dashboard</h1>
-        <p class="text-slate-400 mt-1">National Programme Coordination Office — Real-time Governance Overview</p>
+        <h1 id="dashTitle" class="text-3xl font-bold tracking-tight text-white">SAPZ Executive Dashboard</h1>
+        <p id="dashSubtitle" class="text-slate-400 mt-1">National Programme Coordination Office — Real-time Governance Overview</p>
       </div>
       <div class="flex items-center gap-3">
         <a href="/" class="text-xs text-slate-400 hover:text-white transition-colors mr-4">&larr; Home</a>
-        <span class="px-3 py-1 bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 rounded-full text-xs font-semibold uppercase tracking-wider">
-          System Operational
+        <span id="roleBadge" class="px-3 py-1 bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 rounded-full text-xs font-semibold uppercase tracking-wider">
+          Super Administrator
         </span>
         <div id="headerAuth"></div>
       </div>
@@ -144,34 +332,34 @@ const executiveHtml = `<!DOCTYPE html>
 
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
       <div class="bg-slate-800/40 border border-slate-700/50 rounded-xl p-6">
-        <div class="text-slate-400 text-sm font-medium mb-1">Active Projects</div>
-        <div class="text-3xl font-bold text-white">9 / 12</div>
-        <p class="text-xs text-emerald-400 mt-2">&uarr; 75% Active Operational Rate</p>
+        <div id="kpi1Title" class="text-slate-400 text-sm font-medium mb-1">Active Projects</div>
+        <div id="kpi1Val" class="text-3xl font-bold text-white">9 / 12</div>
+        <p id="kpi1Sub" class="text-xs text-emerald-400 mt-2">&uarr; 75% Active Operational Rate</p>
       </div>
 
       <div class="bg-slate-800/40 border border-slate-700/50 rounded-xl p-6">
-        <div class="text-slate-400 text-sm font-medium mb-1">Total Programme Budget</div>
-        <div class="text-2xl font-bold text-white">&Naira;2,450,000,000.00</div>
-        <p class="text-xs text-blue-400 mt-2">IFAD / AfDB / IsDB Funded</p>
+        <div id="kpi2Title" class="text-slate-400 text-sm font-medium mb-1">Total Programme Budget</div>
+        <div id="kpi2Val" class="text-2xl font-bold text-white">&Naira;2,450,000,000.00</div>
+        <p id="kpi2Sub" class="text-xs text-blue-400 mt-2">IFAD / AfDB / IsDB Funded</p>
       </div>
 
       <div class="bg-slate-800/40 border border-slate-700/50 rounded-xl p-6">
-        <div class="text-slate-400 text-sm font-medium mb-1">Verified Documents</div>
-        <div class="text-3xl font-bold text-white">148</div>
-        <p class="text-xs text-purple-400 mt-2">SHA-256 Digitally Signed</p>
+        <div id="kpi3Title" class="text-slate-400 text-sm font-medium mb-1">Verified Documents</div>
+        <div id="kpi3Val" class="text-3xl font-bold text-white">148</div>
+        <p id="kpi3Sub" class="text-xs text-purple-400 mt-2">SHA-256 Digitally Signed</p>
       </div>
 
       <div class="bg-slate-800/40 border border-slate-700/50 rounded-xl p-6">
-        <div class="text-slate-400 text-sm font-medium mb-1">Audit & Security Score</div>
-        <div class="text-3xl font-bold text-white">98.5%</div>
-        <p class="text-xs text-amber-400 mt-2">100% NDPA Compliant</p>
+        <div id="kpi4Title" class="text-slate-400 text-sm font-medium mb-1">Audit & Security Score</div>
+        <div id="kpi4Val" class="text-3xl font-bold text-white">98.5%</div>
+        <p id="kpi4Sub" class="text-xs text-amber-400 mt-2">100% NDPA Compliant</p>
       </div>
     </div>
 
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
       <div class="lg:col-span-2 bg-slate-800/40 border border-slate-700/50 rounded-xl p-6">
-        <h2 class="text-lg font-semibold text-white mb-4">Programme Health Overview</h2>
-        <div class="space-y-4">
+        <h2 id="moduleHeader" class="text-lg font-semibold text-white mb-4">Programme Health Overview</h2>
+        <div id="modulesContainer" class="space-y-4">
           <div class="flex justify-between items-center bg-slate-800/80 p-4 rounded-lg">
             <span class="text-sm font-medium">Execution Status</span>
             <span class="text-sm font-semibold text-emerald-400">9 Active Projects</span>
@@ -207,6 +395,7 @@ const executiveHtml = `<!DOCTYPE html>
     </div>
   </div>
   ${authHeaderScript}
+  ${roleDashboardScript}
 </body>
 </html>`;
 

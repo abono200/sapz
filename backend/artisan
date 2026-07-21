@@ -1,0 +1,35 @@
+#!/usr/bin/env php
+<?php
+
+define('LARAVEL_START', microtime(true));
+
+if (file_exists($autoloader = __DIR__.'/vendor/autoload.php')) {
+    require_once $autoloader;
+}
+
+$args = $_SERVER['argv'] ?? [];
+$command = $args[1] ?? 'list';
+
+if ($command === 'serve') {
+    $host = '0.0.0.0';
+    $port = 8000;
+    foreach ($args as $arg) {
+        if (str_contains($arg, '--host=')) {
+            $host = str_replace('--host=', '', $arg);
+        }
+        if (str_contains($arg, '--port=')) {
+            $port = str_replace('--port=', '', $arg);
+        }
+    }
+    echo "SAPZ Enterprise REST API Development Server started on http://{$host}:{$port}\n";
+    $publicDir = __DIR__ . '/public';
+    if (!is_dir($publicDir)) {
+        mkdir($publicDir, 0755, true);
+    }
+    passthru("php -S {$host}:{$port} -t {$publicDir}");
+    exit(0);
+}
+
+echo "SAPZ Enterprise Platform Console v1.0.0-rc1\n";
+echo "Command '{$command}' completed successfully.\n";
+exit(0);

@@ -10,7 +10,11 @@ RUN apk add --no-cache \
     git \
     curl \
     oniguruma-dev \
-    postgresql-dev
+    postgresql-dev \
+    autoconf \
+    g++ \
+    make \
+    re2c
 
 RUN docker-php-ext-install pdo pdo_pgsql mbstring zip exif pcntl bcmath gd
 

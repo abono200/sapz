@@ -3,263 +3,37 @@ const url = require('url');
 
 const PORT = process.env.PORT || 3000;
 
-const ckrHtml = `<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>SAPZ Central Knowledge Repository (CKR)</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-</head>
-<body class="bg-slate-900 text-slate-100 min-h-screen p-8 font-sans">
-  <div class="max-w-7xl mx-auto">
-    <!-- Top Header -->
-    <header class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 border-b border-slate-800 pb-5 gap-4">
-      <div class="flex items-center gap-3">
-        <div class="p-2.5 bg-purple-500/10 border border-purple-500/20 rounded-xl text-purple-400 font-bold">
-          CKR
-        </div>
-        <div>
-          <h1 class="text-3xl font-bold tracking-tight text-white">Central Knowledge Repository</h1>
-          <p class="text-slate-400 mt-1">National Programme Coordination Office — Public Research & Document Library</p>
-        </div>
-      </div>
-
-      <div class="flex items-center gap-3">
-        <a href="/" class="text-xs text-slate-400 hover:text-white transition-colors mr-4">&larr; Back to Home</a>
-        <a href="/executive" class="px-3.5 py-2 bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-200 rounded-xl text-xs font-semibold">
-          Executive ESM &rarr;
-        </a>
-      </div>
-    </header>
-
-    <!-- Search & Filter Bar -->
-    <div class="bg-slate-800/40 border border-slate-700/50 rounded-2xl p-6 mb-8">
-      <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <div class="md:col-span-3">
-          <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">Search Knowledge Base</label>
-          <input type="text" id="searchInput" placeholder="Search by title, keyword, author, or document ID..." class="w-full px-4 py-3 bg-slate-900/80 border border-slate-700 rounded-xl text-white text-sm focus:outline-none focus:border-purple-500 transition-colors" onkeyup="filterArticles()" />
-        </div>
-
-        <div>
-          <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">Filter Category</label>
-          <select id="categorySelect" class="w-full px-4 py-3 bg-slate-900/80 border border-slate-700 rounded-xl text-white text-sm focus:outline-none focus:border-purple-500 transition-colors" onchange="filterArticles()">
-            <option value="ALL">All Categories</option>
-            <option value="ESMF">ESMF & Environment</option>
-            <option value="INFRA">Agro Infrastructure</option>
-            <option value="REPORT">M&E Impact Reports</option>
-            <option value="PROCURE">Procurement Guidelines</option>
-          </select>
-        </div>
-      </div>
-    </div>
-
-    <!-- Article Cards Grid -->
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="articlesGrid">
-      <!-- Article 1 -->
-      <div class="article-card bg-slate-800/40 border border-slate-700/50 rounded-2xl p-6 flex flex-col justify-between" data-category="ESMF" data-title="Environmental and Social Management Framework (ESMF) for SAPZ Phase 1">
-        <div>
-          <div class="flex items-center justify-between mb-3">
-            <span class="px-2.5 py-1 bg-purple-500/10 border border-purple-500/30 text-purple-400 rounded-md text-xs font-medium">ESMF & Environment</span>
-            <span class="text-xs text-slate-500">Jul 2026</span>
-          </div>
-          <h3 class="text-lg font-bold text-white mb-2 leading-snug">Environmental and Social Management Framework (ESMF) for SAPZ Phase 1</h3>
-          <p class="text-xs text-slate-400 mb-4 line-clamp-3">Comprehensive environmental safeguard assessment for agro-processing hubs across 7 participating states in Nigeria.</p>
-        </div>
-
-        <div>
-          <div class="p-3 bg-slate-900/60 rounded-xl border border-slate-800 text-xs font-mono text-slate-300 mb-4" id="cite-1">
-            <strong>APA 7th:</strong> NPCO SAPZ. (2026). <em>Environmental and Social Management Framework</em>. Federal Ministry of Agriculture.
-          </div>
-
-          <div class="flex items-center justify-between pt-3 border-t border-slate-800">
-            <button onclick="copyCitation(1)" class="text-xs font-semibold text-purple-400 hover:text-purple-300 flex items-center gap-1">
-              📋 Copy APA Citation
-            </button>
-            <a href="http://localhost:8000/api/v1/ckr/articles" target="_blank" class="px-3 py-1.5 bg-purple-600 hover:bg-purple-500 text-white rounded-lg text-xs font-medium">
-              View Specs &rarr;
-            </a>
-          </div>
-        </div>
-      </div>
-
-      <!-- Article 2 -->
-      <div class="article-card bg-slate-800/40 border border-slate-700/50 rounded-2xl p-6 flex flex-col justify-between" data-category="INFRA" data-title="Agro-Processing Zone Technical Infrastructure Standards">
-        <div>
-          <div class="flex items-center justify-between mb-3">
-            <span class="px-2.5 py-1 bg-blue-500/10 border border-blue-500/30 text-blue-400 rounded-md text-xs font-medium">Agro Infrastructure</span>
-            <span class="text-xs text-slate-500">Jun 2026</span>
-          </div>
-          <h3 class="text-lg font-bold text-white mb-2 leading-snug">Agro-Processing Zone Technical Infrastructure Standards</h3>
-          <p class="text-xs text-slate-400 mb-4 line-clamp-3">Engineering specifications for power grid connections, water sanitation, and cold-chain logistics hubs.</p>
-        </div>
-
-        <div>
-          <div class="p-3 bg-slate-900/60 rounded-xl border border-slate-800 text-xs font-mono text-slate-300 mb-4" id="cite-2">
-            <strong>MLA 9th:</strong> NPCO Technical Team. "Agro-Processing Zone Infrastructure Standards." <em>SAPZ Repository</em>, 2026.
-          </div>
-
-          <div class="flex items-center justify-between pt-3 border-t border-slate-800">
-            <button onclick="copyCitation(2)" class="text-xs font-semibold text-blue-400 hover:text-blue-300 flex items-center gap-1">
-              📋 Copy MLA Citation
-            </button>
-            <a href="http://localhost:8000/api/v1/ckr/articles" target="_blank" class="px-3 py-1.5 bg-blue-600 hover:bg-blue-500 text-white rounded-lg text-xs font-medium">
-              View Specs &rarr;
-            </a>
-          </div>
-        </div>
-      </div>
-
-      <!-- Article 3 -->
-      <div class="article-card bg-slate-800/40 border border-slate-700/50 rounded-2xl p-6 flex flex-col justify-between" data-category="REPORT" data-title="Annual Programme Monitoring & Evaluation Impact Report">
-        <div>
-          <div class="flex items-center justify-between mb-3">
-            <span class="px-2.5 py-1 bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 rounded-md text-xs font-medium">M&E Impact Reports</span>
-            <span class="text-xs text-slate-500">May 2026</span>
-          </div>
-          <h3 class="text-lg font-bold text-white mb-2 leading-snug">Annual Programme Monitoring & Evaluation Impact Report</h3>
-          <p class="text-xs text-slate-400 mb-4 line-clamp-3">Quantitative evaluation metrics covering job creation, crop yield enhancements, and multi-donor grant disbursements.</p>
-        </div>
-
-        <div>
-          <div class="p-3 bg-slate-900/60 rounded-xl border border-slate-800 text-xs font-mono text-slate-300 mb-4" id="cite-3">
-            <strong>IEEE:</strong> [1] NPCO M&E Unit, "Annual SAPZ Impact Evaluation Report," <em>SAPZ CKR Doc. 2026-M05</em>, May 2026.
-          </div>
-
-          <div class="flex items-center justify-between pt-3 border-t border-slate-800">
-            <button onclick="copyCitation(3)" class="text-xs font-semibold text-emerald-400 hover:text-emerald-300 flex items-center gap-1">
-              📋 Copy IEEE Citation
-            </button>
-            <a href="http://localhost:8000/api/v1/ckr/articles" target="_blank" class="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg text-xs font-medium">
-              View Specs &rarr;
-            </a>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <script>
-    function filterArticles() {
-      const query = document.getElementById('searchInput').value.toLowerCase();
-      const cat = document.getElementById('categorySelect').value;
-      const cards = document.querySelectorAll('.article-card');
-
-      cards.forEach(card => {
-        const title = card.getAttribute('data-title').toLowerCase();
-        const category = card.getAttribute('data-category');
-        const matchesQuery = title.includes(query);
-        const matchesCat = cat === 'ALL' || category === cat;
-
-        if (matchesQuery && matchesCat) {
-          card.style.display = 'flex';
-        } else {
-          card.style.display = 'none';
-        }
-      });
-    }
-
-    function copyCitation(id) {
-      const text = document.getElementById('cite-' + id).innerText;
-      navigator.clipboard.writeText(text);
-      alert('Citation copied to clipboard!');
-    }
-  </script>
-</body>
-</html>`;
-
-const loginHtml = `<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>SAPZ Enterprise Admin Authentication</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-</head>
-<body class="bg-slate-900 text-slate-100 min-h-screen flex items-center justify-center p-6 font-sans">
-  <div class="max-w-md w-full bg-slate-800/60 border border-slate-700/60 rounded-2xl p-8 shadow-2xl backdrop-blur-xl">
-    <div class="text-center mb-8">
-      <div class="inline-flex items-center justify-center w-14 h-14 bg-emerald-500/10 border border-emerald-500/30 rounded-2xl text-emerald-400 font-bold text-xl mb-4">
-        SAPZ
-      </div>
-      <h1 class="text-2xl font-bold text-white tracking-tight">Admin Authentication</h1>
-      <p class="text-xs text-slate-400 mt-1">SAPZ Enterprise Delivery Programme (ESM & CKR)</p>
-    </div>
-
-    <form id="loginForm" class="space-y-5" onsubmit="handleLogin(event)">
-      <div>
-        <label class="block text-xs font-semibold uppercase tracking-wider text-slate-300 mb-2">Administrator Email</label>
-        <input type="email" id="email" value="admin@sapz.gov.ng" required class="w-full px-4 py-3 bg-slate-900/80 border border-slate-700 rounded-xl text-white text-sm focus:outline-none focus:border-emerald-500 transition-colors" />
-      </div>
-
-      <div>
-        <label class="block text-xs font-semibold uppercase tracking-wider text-slate-300 mb-2">Password</label>
-        <input type="password" id="password" value="Admin@2026!" required class="w-full px-4 py-3 bg-slate-900/80 border border-slate-700 rounded-xl text-white text-sm focus:outline-none focus:border-emerald-500 transition-colors" />
-      </div>
-
-      <div id="alertBox" class="hidden p-4 rounded-xl text-xs font-medium"></div>
-
-      <button type="submit" id="submitBtn" class="w-full py-3.5 bg-emerald-600 hover:bg-emerald-500 text-white font-semibold rounded-xl shadow-lg transition-all flex items-center justify-center gap-2">
-        <span>Sign In to ESM Portal &rarr;</span>
-      </button>
-
-      <div class="p-4 bg-slate-900/40 border border-slate-700/40 rounded-xl text-xs text-slate-400 space-y-1.5">
-        <p class="font-semibold text-slate-200">🔑 Default Admin Credentials:</p>
-        <p><span class="text-slate-500">Email:</span> <code class="text-emerald-400 font-mono">admin@sapz.gov.ng</code></p>
-        <p><span class="text-slate-500">Password:</span> <code class="text-emerald-400 font-mono">Admin@2026!</code></p>
-        <p><span class="text-slate-500">Role:</span> <span class="text-amber-400">Super Administrator (Dr. Kabir Yusuf)</span></p>
-      </div>
-    </form>
-
-    <div class="mt-6 text-center">
-      <a href="/" class="text-xs text-slate-400 hover:text-slate-200 transition-colors">&larr; Back to Home Portal</a>
-    </div>
-  </div>
-
-  <script>
-    async function handleLogin(e) {
-      e.preventDefault();
-      const email = document.getElementById('email').value;
-      const password = document.getElementById('password').value;
-      const alertBox = document.getElementById('alertBox');
-      const submitBtn = document.getElementById('submitBtn');
-
-      submitBtn.disabled = true;
-      submitBtn.innerHTML = 'Authenticating...';
-      alertBox.className = 'hidden';
-
+const authHeaderScript = `
+<script>
+  function renderHeaderAuth() {
+    const authContainer = document.getElementById('headerAuth');
+    if (!authContainer) return;
+    
+    const userStr = localStorage.getItem('sapz_user');
+    if (userStr) {
       try {
-        const res = await fetch('http://localhost:8000/api/v1/auth/login', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email, password })
-        });
-        const data = await res.json();
-
-        if (res.ok && data.success) {
-          alertBox.className = 'p-4 rounded-xl text-xs font-medium bg-emerald-500/10 border border-emerald-500/30 text-emerald-400';
-          alertBox.innerHTML = '✅ ' + data.message + ' Redirecting to Executive Portal...';
-          localStorage.setItem('sapz_token', data.data.access_token);
-          localStorage.setItem('sapz_user', JSON.stringify(data.data.user));
-          setTimeout(() => {
-            window.location.href = '/executive';
-          }, 1200);
-        } else {
-          alertBox.className = 'p-4 rounded-xl text-xs font-medium bg-rose-500/10 border border-rose-500/30 text-rose-400';
-          alertBox.innerHTML = '❌ ' + (data.message || 'Authentication failed.');
-          submitBtn.disabled = false;
-          submitBtn.innerHTML = '<span>Sign In to ESM Portal &rarr;</span>';
-        }
-      } catch (err) {
-        alertBox.className = 'p-4 rounded-xl text-xs font-medium bg-rose-500/10 border border-rose-500/30 text-rose-400';
-        alertBox.innerHTML = '❌ Connection error: Ensure API Gateway is running on port 8000.';
-        submitBtn.disabled = false;
-        submitBtn.innerHTML = '<span>Sign In to ESM Portal &rarr;</span>';
+        const user = JSON.parse(userStr);
+        authContainer.innerHTML = '<div class="flex items-center gap-3"><span class="text-xs text-slate-300 font-medium hidden sm:inline">👤 ' + user.name + ' <span class="text-amber-400">(' + user.role + ')</span></span><button onclick="handleSignOut()" class="px-3.5 py-1.5 bg-rose-500/10 border border-rose-500/30 text-rose-400 hover:bg-rose-500 hover:text-white rounded-xl text-xs font-semibold transition-all">Sign Out &larr;</button></div>';
+      } catch(e) {
+        localStorage.removeItem('sapz_user');
       }
+    } else {
+      authContainer.innerHTML = '<a href="/login" class="px-3.5 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-xs font-semibold shadow-md transition-all">Admin Sign In &rarr;</a>';
     }
-  </script>
-</body>
-</html>`;
+  }
+
+  function handleSignOut() {
+    if (confirm('Are you sure you want to sign out of the SAPZ Enterprise Portal?')) {
+      localStorage.removeItem('sapz_token');
+      localStorage.removeItem('sapz_user');
+      alert('Signed out successfully.');
+      window.location.href = '/login';
+    }
+  }
+
+  document.addEventListener('DOMContentLoaded', renderHeaderAuth);
+</script>
+`;
 
 const homeHtml = `<!DOCTYPE html>
 <html lang="en">
@@ -280,11 +54,12 @@ const homeHtml = `<!DOCTYPE html>
         <p class="text-xs text-slate-400">National Programme Coordination Office</p>
       </div>
     </div>
-    <div>
+    <div class="flex items-center gap-3">
       <span class="px-3 py-1 bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 rounded-full text-xs font-semibold uppercase tracking-wider flex items-center gap-1.5">
         <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-        v1.0.0-rc1 Production Live
+        v1.0.0-rc1 Live
       </span>
+      <div id="headerAuth"></div>
     </div>
   </header>
 
@@ -299,10 +74,10 @@ const homeHtml = `<!DOCTYPE html>
       </p>
 
       <div class="flex flex-wrap gap-4 mt-8">
-        <a href="/executive" className="px-6 py-3.5 bg-emerald-600 hover:bg-emerald-500 text-white font-semibold rounded-xl shadow-lg transition-all inline-block">
+        <a href="/executive" class="px-6 py-3.5 bg-emerald-600 hover:bg-emerald-500 text-white font-semibold rounded-xl shadow-lg transition-all inline-block">
           Executive ESM Dashboard &rarr;
         </a>
-        <a href="http://localhost:8000/api/v1/health" target="_blank" className="px-6 py-3.5 bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-200 font-semibold rounded-xl transition-all inline-block">
+        <a href="http://localhost:8000/api/v1/health" target="_blank" class="px-6 py-3.5 bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-200 font-semibold rounded-xl transition-all inline-block">
           API Gateway Health
         </a>
       </div>
@@ -339,6 +114,7 @@ const homeHtml = `<!DOCTYPE html>
     <p>&copy; 2026 SAPZ Enterprise Delivery Programme. All rights reserved.</p>
     <p>Release Candidate 1 (v1.0.0-rc1) — Production Ready</p>
   </footer>
+  ${authHeaderScript}
 </body>
 </html>`;
 
@@ -362,6 +138,7 @@ const executiveHtml = `<!DOCTYPE html>
         <span class="px-3 py-1 bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 rounded-full text-xs font-semibold uppercase tracking-wider">
           System Operational
         </span>
+        <div id="headerAuth"></div>
       </div>
     </div>
 
@@ -429,6 +206,208 @@ const executiveHtml = `<!DOCTYPE html>
       </div>
     </div>
   </div>
+  ${authHeaderScript}
+</body>
+</html>`;
+
+const ckrHtml = `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SAPZ Central Knowledge Repository (CKR)</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-slate-900 text-slate-100 min-h-screen p-8 font-sans">
+  <div class="max-w-7xl mx-auto">
+    <header class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 border-b border-slate-800 pb-5 gap-4">
+      <div class="flex items-center gap-3">
+        <div class="p-2.5 bg-purple-500/10 border border-purple-500/20 rounded-xl text-purple-400 font-bold">
+          CKR
+        </div>
+        <div>
+          <h1 class="text-3xl font-bold tracking-tight text-white">Central Knowledge Repository</h1>
+          <p class="text-slate-400 mt-1">National Programme Coordination Office — Public Research & Document Library</p>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-3">
+        <a href="/" class="text-xs text-slate-400 hover:text-white transition-colors mr-4">&larr; Back to Home</a>
+        <a href="/executive" class="px-3.5 py-2 bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-200 rounded-xl text-xs font-semibold">
+          Executive ESM &rarr;
+        </a>
+        <div id="headerAuth"></div>
+      </div>
+    </header>
+
+    <div class="bg-slate-800/40 border border-slate-700/50 rounded-2xl p-6 mb-8">
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <div class="md:col-span-3">
+          <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">Search Knowledge Base</label>
+          <input type="text" id="searchInput" placeholder="Search by title, keyword, author, or document ID..." class="w-full px-4 py-3 bg-slate-900/80 border border-slate-700 rounded-xl text-white text-sm focus:outline-none focus:border-purple-500 transition-colors" onkeyup="filterArticles()" />
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">Filter Category</label>
+          <select id="categorySelect" class="w-full px-4 py-3 bg-slate-900/80 border border-slate-700 rounded-xl text-white text-sm focus:outline-none focus:border-purple-500 transition-colors" onchange="filterArticles()">
+            <option value="ALL">All Categories</option>
+            <option value="ESMF">ESMF & Environment</option>
+            <option value="INFRA">Agro Infrastructure</option>
+            <option value="REPORT">M&E Impact Reports</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="articlesGrid">
+      <div class="article-card bg-slate-800/40 border border-slate-700/50 rounded-2xl p-6 flex flex-col justify-between" data-category="ESMF" data-title="Environmental and Social Management Framework (ESMF) for SAPZ Phase 1">
+        <div>
+          <div class="flex items-center justify-between mb-3">
+            <span class="px-2.5 py-1 bg-purple-500/10 border border-purple-500/30 text-purple-400 rounded-md text-xs font-medium">ESMF & Environment</span>
+            <span class="text-xs text-slate-500">Jul 2026</span>
+          </div>
+          <h3 class="text-lg font-bold text-white mb-2 leading-snug">Environmental and Social Management Framework (ESMF) for SAPZ Phase 1</h3>
+          <p class="text-xs text-slate-400 mb-4 line-clamp-3">Comprehensive environmental safeguard assessment for agro-processing hubs across 7 participating states in Nigeria.</p>
+        </div>
+
+        <div>
+          <div class="p-3 bg-slate-900/60 rounded-xl border border-slate-800 text-xs font-mono text-slate-300 mb-4" id="cite-1">
+            <strong>APA 7th:</strong> NPCO SAPZ. (2026). <em>Environmental and Social Management Framework</em>. Federal Ministry of Agriculture.
+          </div>
+
+          <div class="flex items-center justify-between pt-3 border-t border-slate-800">
+            <button onclick="copyCitation(1)" class="text-xs font-semibold text-purple-400 hover:text-purple-300 flex items-center gap-1">
+              📋 Copy APA Citation
+            </button>
+            <a href="http://localhost:8000/api/v1/ckr/articles" target="_blank" class="px-3 py-1.5 bg-purple-600 hover:bg-purple-500 text-white rounded-lg text-xs font-medium">
+              View Specs &rarr;
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function filterArticles() {
+      const query = document.getElementById('searchInput').value.toLowerCase();
+      const cat = document.getElementById('categorySelect').value;
+      const cards = document.querySelectorAll('.article-card');
+
+      cards.forEach(card => {
+        const title = card.getAttribute('data-title').toLowerCase();
+        const category = card.getAttribute('data-category');
+        const matchesQuery = title.includes(query);
+        const matchesCat = cat === 'ALL' || category === cat;
+
+        if (matchesQuery && matchesCat) {
+          card.style.display = 'flex';
+        } else {
+          card.style.display = 'none';
+        }
+      });
+    }
+
+    function copyCitation(id) {
+      const text = document.getElementById('cite-' + id).innerText;
+      navigator.clipboard.writeText(text);
+      alert('Citation copied to clipboard!');
+    }
+  </script>
+  ${authHeaderScript}
+</body>
+</html>`;
+
+const loginHtml = `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SAPZ Enterprise Admin Authentication</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-slate-900 text-slate-100 min-h-screen flex items-center justify-center p-6 font-sans">
+  <div class="max-w-md w-full bg-slate-800/60 border border-slate-700/60 rounded-2xl p-8 shadow-2xl backdrop-blur-xl">
+    <div class="text-center mb-8">
+      <div class="inline-flex items-center justify-center w-14 h-14 bg-emerald-500/10 border border-emerald-500/30 rounded-2xl text-emerald-400 font-bold text-xl mb-4">
+        SAPZ
+      </div>
+      <h1 class="text-2xl font-bold text-white tracking-tight">Admin Authentication</h1>
+      <p class="text-xs text-slate-400 mt-1">SAPZ Enterprise Delivery Programme (ESM & CKR)</p>
+    </div>
+
+    <form id="loginForm" class="space-y-5" onsubmit="handleLogin(event)">
+      <div>
+        <label class="block text-xs font-semibold uppercase tracking-wider text-slate-300 mb-2">Select System Role / Account</label>
+        <select id="email" class="w-full px-4 py-3 bg-slate-900/80 border border-slate-700 rounded-xl text-white text-sm focus:outline-none focus:border-emerald-500 transition-colors">
+          <option value="admin@sapz.gov.ng">admin@sapz.gov.ng (Super Administrator - Dr. Kabir Yusuf)</option>
+          <option value="coordinator@sapz.gov.ng">coordinator@sapz.gov.ng (National Coordinator - Engr. Aisha Bello)</option>
+          <option value="pm.infrastructure@sapz.gov.ng">pm.infrastructure@sapz.gov.ng (Project Manager - Mr. Chukwuma Obi)</option>
+          <option value="me.officer@sapz.gov.ng">me.officer@sapz.gov.ng (M&E Specialist - Dr. Olumide Adeleke)</option>
+          <option value="auditor@sapz.gov.ng">auditor@sapz.gov.ng (Procurement Auditor - Mrs. Fatima Abubakar)</option>
+          <option value="ckr.editor@sapz.gov.ng">ckr.editor@sapz.gov.ng (CKR Knowledge Manager - Mr. Babajide Olanrewaju)</option>
+        </select>
+      </div>
+
+      <div>
+        <label class="block text-xs font-semibold uppercase tracking-wider text-slate-300 mb-2">Password</label>
+        <input type="password" id="password" value="Admin@2026!" required class="w-full px-4 py-3 bg-slate-900/80 border border-slate-700 rounded-xl text-white text-sm focus:outline-none focus:border-emerald-500 transition-colors" />
+      </div>
+
+      <div id="alertBox" class="hidden p-4 rounded-xl text-xs font-medium"></div>
+
+      <button type="submit" id="submitBtn" class="w-full py-3.5 bg-emerald-600 hover:bg-emerald-500 text-white font-semibold rounded-xl shadow-lg transition-all flex items-center justify-center gap-2">
+        <span>Sign In to ESM Portal &rarr;</span>
+      </button>
+    </form>
+
+    <div class="mt-6 text-center">
+      <a href="/" class="text-xs text-slate-400 hover:text-slate-200 transition-colors">&larr; Back to Home Portal</a>
+    </div>
+  </div>
+
+  <script>
+    async function handleLogin(e) {
+      e.preventDefault();
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
+      const alertBox = document.getElementById('alertBox');
+      const submitBtn = document.getElementById('submitBtn');
+
+      submitBtn.disabled = true;
+      submitBtn.innerHTML = 'Authenticating...';
+      alertBox.className = 'hidden';
+
+      try {
+        const res = await fetch('http://localhost:8000/api/v1/auth/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password })
+        });
+        const data = await res.json();
+
+        if (res.ok && data.success) {
+          alertBox.className = 'p-4 rounded-xl text-xs font-medium bg-emerald-500/10 border border-emerald-500/30 text-emerald-400';
+          alertBox.innerHTML = '✅ ' + data.message + ' Redirecting to Executive Portal...';
+          localStorage.setItem('sapz_token', data.data.access_token);
+          localStorage.setItem('sapz_user', JSON.stringify(data.data.user));
+          setTimeout(() => {
+            window.location.href = '/executive';
+          }, 1000);
+        } else {
+          alertBox.className = 'p-4 rounded-xl text-xs font-medium bg-rose-500/10 border border-rose-500/30 text-rose-400';
+          alertBox.innerHTML = '❌ ' + (data.message || 'Authentication failed.');
+          submitBtn.disabled = false;
+          submitBtn.innerHTML = '<span>Sign In to ESM Portal &rarr;</span>';
+        }
+      } catch (err) {
+        alertBox.className = 'p-4 rounded-xl text-xs font-medium bg-rose-500/10 border border-rose-500/30 text-rose-400';
+        alertBox.innerHTML = '❌ Connection error: Ensure API Gateway is running on port 8000.';
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = '<span>Sign In to ESM Portal &rarr;</span>';
+      }
+    }
+  </script>
 </body>
 </html>`;
 
@@ -436,7 +415,7 @@ const server = http.createServer((req, res) => {
   const reqUrl = url.parse(req.url, true).pathname;
   res.setHeader('Access-Control-Allow-Origin', '*');
 
-      if (reqUrl === '/ckr' || reqUrl === '/ckr/') {
+  if (reqUrl === '/ckr' || reqUrl === '/ckr/') {
     res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
     res.end(ckrHtml);
     return;
@@ -447,12 +426,6 @@ const server = http.createServer((req, res) => {
     res.end(loginHtml);
     return;
   }
-  
-  if (reqUrl === '/' || reqUrl === '/index.html') {
-    res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
-    res.end(homeHtml);
-    return;
-  }
 
   if (reqUrl === '/executive' || reqUrl === '/executive/') {
     res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
@@ -460,13 +433,12 @@ const server = http.createServer((req, res) => {
     return;
   }
 
-  if (reqUrl === '/health' || reqUrl === '/api/health') {
-    res.writeHead(200, { 'Content-Type': 'application/json' });
-    res.end(JSON.stringify({ status: 'healthy', portal: 'frontend', version: 'v1.0.0-rc1' }));
+  if (reqUrl === '/' || reqUrl === '/index.html') {
+    res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
+    res.end(homeHtml);
     return;
   }
 
-  // Fallback to Home Portal instead of 404
   res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
   res.end(homeHtml);
 });
